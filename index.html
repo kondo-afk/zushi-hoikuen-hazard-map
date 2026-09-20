@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="逗子市の保育施設と津波・土砂災害リスクを比較する地図" />
-    <title>ずし保育園ハザードマップ</title>
+    <meta name="description" content="逗子・葉山・鎌倉・横須賀北部の保育施設と津波・土砂災害リスクを比較する地図" />
+    <title>逗子周辺 保育園ハザードマップ</title>
     <link rel="preconnect" href="https://unpkg.com" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <link rel="stylesheet" href="styles.css" />
@@ -15,8 +15,8 @@
         <div class="brand">
           <span class="brand-mark" aria-hidden="true"><i data-lucide="shield-check"></i></span>
           <div>
-            <h1>ずし保育園ハザードマップ</h1>
-            <p>津波・土砂災害から引っ越し候補を考える</p>
+            <h1>逗子周辺 保育園ハザードマップ</h1>
+            <p>逗子・葉山・鎌倉・横須賀北部から引っ越し候補を考える</p>
           </div>
         </div>
         <div class="top-actions">
@@ -32,16 +32,18 @@
       <main class="workspace">
         <aside class="sidebar" aria-label="保育施設一覧">
           <div class="summary-band">
-            <div><strong id="visibleCount">19</strong><span>表示施設</span></div>
-            <div><strong id="riskCount">18</strong><span>周辺リスクあり</span></div>
-            <div><strong id="bothCount">2</strong><span>両方あり</span></div>
+            <div><strong id="visibleCount">44</strong><span>表示施設</span></div>
+            <div><strong id="riskCount">19</strong><span>判定済み</span></div>
+            <div><strong id="bothCount">25</strong><span>地点未判定</span></div>
           </div>
 
           <div class="controls">
             <label class="search-box">
               <i data-lucide="search"></i>
-              <input id="searchInput" type="search" placeholder="園名・住所で検索" autocomplete="off" />
+              <input id="searchInput" type="search" placeholder="園名・住所・市町名で検索" autocomplete="off" />
             </label>
+
+            <label class="area-select"><span>エリア</span><select id="citySelect"><option value="all">周辺全域（44施設）</option><option value="zushi">逗子市（19）</option><option value="hayama">葉山町（9）</option><option value="kamakura">鎌倉地域（10）</option><option value="yokosuka">追浜・田浦（6）</option></select></label>
 
             <div class="control-row">
               <div class="segmented" aria-label="施設区分">
@@ -59,6 +61,7 @@
               <button class="filter-chip" type="button" data-risk="both"><span class="dot danger"></span>両方</button>
               <button class="filter-chip" type="button" data-risk="tsunami"><span class="dot tsunami"></span>津波</button>
               <button class="filter-chip" type="button" data-risk="landslide"><span class="dot landslide"></span>土砂</button>
+              <button class="filter-chip" type="button" data-risk="unreviewed"><span class="dot unreviewed"></span>未判定</button>
               <button class="filter-chip" type="button" data-risk="none"><span class="dot none"></span>表示なし</button>
             </div>
 
@@ -106,7 +109,7 @@
           <button class="icon-button" value="close" aria-label="閉じる"><i data-lucide="x"></i></button>
         </div>
         <div class="dialog-body">
-          <p>色付きのハザード面と園のピンを重ねて、園舎が区域内か、区域に隣接しているかを目で確認できます。</p>
+          <p>色付きのハザード面と園のピンを重ねて、園舎が区域内か、区域に隣接しているかを目で確認できます。対象は逗子市に加え、葉山町、鎌倉地域、横須賀市の追浜・田浦です。</p>
           <div class="notice"><i data-lucide="triangle-alert"></i><p>一覧の判定は、国土地理院の住所検索が示した「地点とその周辺」の結果です。園舎そのものが区域内と断定するものではありません。</p></div>
           <h3>引っ越し検討で確認したいこと</h3>
           <ol>
@@ -114,7 +117,7 @@
             <li>自宅候補地から園までの経路が区域を通るか</li>
             <li>園の避難先と、全園児での避難訓練時間</li>
           </ol>
-          <p class="source-copy">施設情報：<a href="https://www.city.zushi.kanagawa.jp/kosodate/egao/1002588/1002676/1002682/1002683/1002684.html" target="_blank" rel="noreferrer">逗子市公式サイト</a>（2026年8月18日更新）<br />ハザード情報：<a href="https://disaportal.gsi.go.jp/" target="_blank" rel="noreferrer">国土地理院「重ねるハザードマップ」</a>公開タイル</p>
+          <p class="source-copy">施設情報：逗子市・葉山町・鎌倉市・横須賀市の公式施設一覧<br />ハザード情報：<a href="https://disaportal.gsi.go.jp/" target="_blank" rel="noreferrer">国土地理院「重ねるハザードマップ」</a>公開タイル</p>
         </div>
         <div class="dialog-actions"><button class="primary-button" value="close">地図を見る</button></div>
       </form>

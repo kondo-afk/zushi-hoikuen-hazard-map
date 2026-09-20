@@ -65,6 +65,9 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .search-box svg { width: 17px; color: var(--muted); }
 .search-box input { width: 100%; border: 0; outline: 0; color: var(--ink); }
 .search-box input::placeholder { color: #909aa1; }
+.area-select { height: 36px; display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 10px; padding: 0 10px; border: 1px solid var(--line); border-radius: 6px; background: white; }
+.area-select span { color: var(--muted); font-size: 10px; font-weight: 700; }
+.area-select select { min-width: 0; width: 100%; border: 0; outline: 0; background: transparent; color: var(--ink); font-size: 12px; font-weight: 700; }
 .control-row { display: flex; gap: 8px; }
 .segmented { min-width: 0; flex: 1; display: grid; grid-template-columns: repeat(3, 1fr); padding: 3px; border-radius: 7px; background: #edf1ef; }
 .segmented button { min-width: 0; height: 30px; border: 0; border-radius: 5px; color: #637069; background: transparent; cursor: pointer; font-size: 12px; }
@@ -76,6 +79,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .dot.danger { background: var(--danger); }
 .dot.tsunami { background: var(--tsunami); }
 .dot.landslide { background: var(--landslide); }
+.dot.unreviewed { background: var(--green); }
 .dot.none { background: #aab3b8; }
 .origin-control { display: flex; align-items: center; justify-content: space-between; min-height: 45px; padding-top: 9px; border-top: 1px solid #edf0ef; }
 .origin-control strong { display: block; margin-top: 2px; font-size: 13px; }
@@ -93,6 +97,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .marker-mini.both { background: var(--danger); }
 .marker-mini.tsunami { background: var(--tsunami); }
 .marker-mini.landslide { background: var(--landslide); color: #3d2b0c; }
+.marker-mini.unreviewed { background: var(--green); }
 .marker-mini.none { background: #859198; }
 .facility-card h3 { margin: 0; font-size: 13px; line-height: 1.4; }
 .facility-meta { margin-top: 4px; color: var(--muted); font-size: 10px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -100,6 +105,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .risk-tag { display: inline-flex; align-items: center; min-height: 21px; padding: 2px 7px; border-radius: 4px; font-size: 10px; font-weight: 700; line-height: 1.2; }
 .risk-tag.tsunami { color: #2b559f; background: #e8efff; }
 .risk-tag.landslide { color: #805711; background: #fff0d3; }
+.risk-tag.unreviewed { color: #17614e; background: #e0f1eb; }
 .risk-tag.none { color: #667278; background: #edf0f1; }
 .bookmark-button { width: 26px; height: 30px; padding: 0; display: grid; place-items: center; border: 0; color: #9aa3a8; background: transparent; cursor: pointer; }
 .bookmark-button svg { width: 16px; }
@@ -122,6 +128,7 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .school-marker.both { background: var(--danger); }
 .school-marker.tsunami { background: var(--tsunami); }
 .school-marker.landslide { background: var(--landslide); color: #3d2b0c; }
+.school-marker.unreviewed { background: var(--green); }
 .school-marker.none { background: #859198; }
 .origin-marker { width: 22px; height: 22px; border: 4px solid #fff; border-radius: 50%; background: var(--green-dark); box-shadow: 0 2px 9px rgba(0,0,0,.3); }
 .layer-switcher { position: absolute; z-index: 600; top: 14px; left: 14px; display: flex; align-items: center; gap: 10px; padding: 9px 11px; border: 1px solid rgba(177,188,184,.8); border-radius: 7px; background: rgba(255,255,255,.94); box-shadow: 0 4px 15px rgba(0,0,0,.1); font-size: 11px; }
