@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="逗子市の保育施設と津波・土砂災害リスクを比較する地図" />
+    <title>ずし保育園ハザードマップ</title>
+    <link rel="preconnect" href="https://unpkg.com" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true"><i data-lucide="shield-check"></i></span>
+          <div>
+            <h1>ずし保育園ハザードマップ</h1>
+            <p>津波・土砂災害から引っ越し候補を考える</p>
+          </div>
+        </div>
+        <div class="top-actions">
+          <button id="aboutButton" class="icon-button" type="button" title="この地図について" aria-label="この地図について">
+            <i data-lucide="info"></i>
+          </button>
+          <a class="icon-button" href="https://disaportal.gsi.go.jp/hazardmap/maps/index.html?ll=35.282657,139.582179&z=16&base=pale&ls=dosha_keikai_jisuberi%2C0.8%7Cdosha_keikai_dosekiryu%2C0.8%7Cdosha_keikai_kyukeisha%2C0.8%7Ctsunamishinsui_raster%2C0.8&disp=11110" target="_blank" rel="noreferrer" title="重ねるハザードマップで開く" aria-label="重ねるハザードマップで開く">
+            <i data-lucide="external-link"></i>
+          </a>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <aside class="sidebar" aria-label="保育施設一覧">
+          <div class="summary-band">
+            <div><strong id="visibleCount">19</strong><span>表示施設</span></div>
+            <div><strong id="riskCount">18</strong><span>周辺リスクあり</span></div>
+            <div><strong id="bothCount">2</strong><span>両方あり</span></div>
+          </div>
+
+          <div class="controls">
+            <label class="search-box">
+              <i data-lucide="search"></i>
+              <input id="searchInput" type="search" placeholder="園名・住所で検索" autocomplete="off" />
+            </label>
+
+            <div class="control-row">
+              <div class="segmented" aria-label="施設区分">
+                <button class="active" type="button" data-type="all">すべて</button>
+                <button type="button" data-type="licensed">認可系</button>
+                <button type="button" data-type="unlicensed">認可外等</button>
+              </div>
+              <button id="favoritesOnly" class="icon-button compact" type="button" title="保存した園だけ表示" aria-label="保存した園だけ表示">
+                <i data-lucide="bookmark"></i>
+              </button>
+            </div>
+
+            <div class="filter-row" aria-label="リスク絞り込み">
+              <button class="filter-chip active" type="button" data-risk="all">すべて</button>
+              <button class="filter-chip" type="button" data-risk="both"><span class="dot danger"></span>両方</button>
+              <button class="filter-chip" type="button" data-risk="tsunami"><span class="dot tsunami"></span>津波</button>
+              <button class="filter-chip" type="button" data-risk="landslide"><span class="dot landslide"></span>土砂</button>
+              <button class="filter-chip" type="button" data-risk="none"><span class="dot none"></span>表示なし</button>
+            </div>
+
+            <div class="origin-control">
+              <div>
+                <span class="eyebrow">距離の起点</span>
+                <strong id="originLabel">逗子駅</strong>
+              </div>
+              <button id="setOriginButton" class="text-button" type="button"><i data-lucide="map-pin"></i>候補地を指定</button>
+            </div>
+          </div>
+
+          <div class="list-heading">
+            <span id="resultLabel">19施設</span>
+            <select id="sortSelect" aria-label="並び順">
+              <option value="distance">起点から近い順</option>
+              <option value="risk">リスクが高い順</option>
+              <option value="name">園名順</option>
+            </select>
+          </div>
+          <div id="facilityList" class="facility-list" aria-live="polite"></div>
+        </aside>
+
+        <section class="map-panel" aria-label="ハザードマップ">
+          <div id="map"></div>
+          <div class="layer-switcher" role="group" aria-label="ハザードレイヤー">
+            <span>表示</span>
+            <label><input id="tsunamiToggle" type="checkbox" checked /> <span class="swatch tsunami-fill"></span>津波</label>
+            <label><input id="landslideToggle" type="checkbox" checked /> <span class="swatch landslide-fill"></span>土砂</label>
+          </div>
+          <div id="originHint" class="origin-hint" hidden><i data-lucide="crosshair"></i>地図上の引っ越し候補地点をクリック</div>
+          <button id="resetViewButton" class="map-button" type="button" title="逗子全域を表示" aria-label="逗子全域を表示"><i data-lucide="maximize"></i></button>
+          <div class="map-note"><i data-lucide="mouse-pointer-click"></i>園を選ぶと詳細を表示</div>
+        </section>
+      </main>
+    </div>
+
+    <dialog id="aboutDialog">
+      <form method="dialog">
+        <div class="dialog-head">
+          <div>
+            <span class="eyebrow">ご利用前に</span>
+            <h2>この地図の読み方</h2>
+          </div>
+          <button class="icon-button" value="close" aria-label="閉じる"><i data-lucide="x"></i></button>
+        </div>
+        <div class="dialog-body">
+          <p>色付きのハザード面と園のピンを重ねて、園舎が区域内か、区域に隣接しているかを目で確認できます。</p>
+          <div class="notice"><i data-lucide="triangle-alert"></i><p>一覧の判定は、国土地理院の住所検索が示した「地点とその周辺」の結果です。園舎そのものが区域内と断定するものではありません。</p></div>
+          <h3>引っ越し検討で確認したいこと</h3>
+          <ol>
+            <li>園舎のピンがハザード区域の色の内側にあるか</li>
+            <li>自宅候補地から園までの経路が区域を通るか</li>
+            <li>園の避難先と、全園児での避難訓練時間</li>
+          </ol>
+          <p class="source-copy">施設情報：<a href="https://www.city.zushi.kanagawa.jp/kosodate/egao/1002588/1002676/1002682/1002683/1002684.html" target="_blank" rel="noreferrer">逗子市公式サイト</a>（2026年8月18日更新）<br />ハザード情報：<a href="https://disaportal.gsi.go.jp/" target="_blank" rel="noreferrer">国土地理院「重ねるハザードマップ」</a>公開タイル</p>
+        </div>
+        <div class="dialog-actions"><button class="primary-button" value="close">地図を見る</button></div>
+      </form>
+    </dialog>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
