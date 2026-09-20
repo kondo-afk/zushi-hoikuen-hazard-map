@@ -42,7 +42,8 @@ const facilities = [
   { id: 41, name: "のばら保育園", type: "licensed", typeLabel: "認可保育所・私立", city: "yokosuka", cityLabel: "追浜・田浦", address: "横須賀市追浜町2-16-7", lat: 35.313503, lng: 139.626984, reviewed: false },
   { id: 42, name: "ぎんのすず保育園", type: "licensed", typeLabel: "認可保育所・私立", city: "yokosuka", cityLabel: "追浜・田浦", address: "横須賀市追浜町2-71", lat: 35.310829, lng: 139.62529, reviewed: false },
   { id: 43, name: "船越保育園", type: "licensed", typeLabel: "認可保育所・公立", city: "yokosuka", cityLabel: "追浜・田浦", address: "横須賀市船越町6-47-42", lat: 35.301662, lng: 139.628845, reviewed: false },
-  { id: 44, name: "ベネッセ田浦保育園", type: "licensed", typeLabel: "認可保育所・私立", city: "yokosuka", cityLabel: "追浜・田浦", address: "横須賀市長浦町1-20-3", lat: 35.291527, lng: 139.646423, reviewed: false }
+  { id: 44, name: "ベネッセ田浦保育園", type: "licensed", typeLabel: "認可保育所・私立", city: "yokosuka", cityLabel: "追浜・田浦", address: "横須賀市長浦町1-20-3", lat: 35.291527, lng: 139.646423, reviewed: false },
+  ...regionalFacilities
 ];
 
 const state = {
@@ -72,7 +73,12 @@ const landslideLayers = [
 ].map(id => L.tileLayer(`https://disaportal.gsi.go.jp/data/raster/${id}/{z}/{x}/{y}.png`, { opacity: 0.68, maxZoom: 18, attribution: "ハザード情報: 国土地理院" }).addTo(map));
 
 const markers = new Map();
-const schoolLayer = L.layerGroup().addTo(map);
+const schoolLayer = L.markerClusterGroup({
+  showCoverageOnHover: false,
+  maxClusterRadius: 44,
+  spiderfyOnMaxZoom: true,
+  disableClusteringAtZoom: 17
+}).addTo(map);
 let originMarker = null;
 
 function riskClass(facility) {
@@ -175,6 +181,11 @@ function render() {
   lucide.createIcons();
 }
 
+function fitFacilities(items = filteredFacilities()) {
+  if (!items.length) return;
+  map.fitBounds(L.latLngBounds(items.map(f => [f.lat, f.lng])), { padding: [34, 34], maxZoom: 15 });
+}
+
 function bindListEvents() {
   document.querySelectorAll(".facility-card").forEach(card => card.addEventListener("click", e => {
     if (e.target.closest("[data-bookmark]")) return;
@@ -210,7 +221,11 @@ buildMarkers();
 updateOrigin(state.origin.lat, state.origin.lng, state.origin.label);
 
 document.getElementById("searchInput").addEventListener("input", e => { state.search = e.target.value; render(); });
-document.getElementById("citySelect").addEventListener("change", e => { state.city = e.target.value; render(); });
+document.getElementById("citySelect").addEventListener("change", e => {
+  state.city = e.target.value;
+  render();
+  fitFacilities();
+});
 document.getElementById("sortSelect").addEventListener("change", e => { state.sort = e.target.value; render(); });
 document.querySelectorAll("[data-type]").forEach(button => button.addEventListener("click", () => {
   state.type = button.dataset.type;
@@ -241,8 +256,8 @@ map.on("click", e => {
 });
 document.getElementById("tsunamiToggle").addEventListener("change", e => e.target.checked ? tsunamiLayer.addTo(map) : map.removeLayer(tsunamiLayer));
 document.getElementById("landslideToggle").addEventListener("change", e => landslideLayers.forEach(l => e.target.checked ? l.addTo(map) : map.removeLayer(l)));
-document.getElementById("resetViewButton").addEventListener("click", () => map.fitBounds([[35.264,139.535],[35.325,139.652]], { padding: [25,25] }));
+document.getElementById("resetViewButton").addEventListener("click", () => fitFacilities());
 document.getElementById("aboutButton").addEventListener("click", () => document.getElementById("aboutDialog").showModal());
 
 lucide.createIcons();
-map.fitBounds([[35.264,139.535],[35.325,139.652]], { padding: [25,25] });
+fitFacilities(facilities);

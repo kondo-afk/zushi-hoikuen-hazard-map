@@ -3,11 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="逗子・葉山・鎌倉・横須賀北部の保育施設と津波・土砂災害リスクを比較する地図" />
-    <title>逗子周辺 保育園ハザードマップ</title>
+    <meta name="description" content="逗子・葉山・鎌倉・横須賀北部・藤沢・茅ヶ崎の保育施設と津波・土砂災害リスクを比較する地図" />
+    <title>湘南東部 保育園ハザードマップ</title>
     <link rel="preconnect" href="https://unpkg.com" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <link rel="stylesheet" href="styles.css?v=2" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css" />
+    <link rel="stylesheet" href="styles.css?v=3" />
   </head>
   <body>
     <div class="app-shell">
@@ -15,8 +17,8 @@
         <div class="brand">
           <span class="brand-mark" aria-hidden="true"><i data-lucide="shield-check"></i></span>
           <div>
-            <h1>逗子周辺 保育園ハザードマップ</h1>
-            <p>逗子・葉山・鎌倉・横須賀北部から引っ越し候補を考える</p>
+            <h1>湘南東部 保育園ハザードマップ</h1>
+            <p>逗子を起点に藤沢・茅ヶ崎まで、引っ越し候補を比較</p>
           </div>
         </div>
         <div class="top-actions">
@@ -32,9 +34,9 @@
       <main class="workspace">
         <aside class="sidebar" aria-label="保育施設一覧">
           <div class="summary-band">
-            <div><strong id="visibleCount">44</strong><span>表示施設</span></div>
+            <div><strong id="visibleCount">250</strong><span>表示施設</span></div>
             <div><strong id="riskCount">19</strong><span>判定済み</span></div>
-            <div><strong id="bothCount">25</strong><span>地点未判定</span></div>
+            <div><strong id="bothCount">231</strong><span>地点未判定</span></div>
           </div>
 
           <div class="controls">
@@ -43,7 +45,7 @@
               <input id="searchInput" type="search" placeholder="園名・住所・市町名で検索" autocomplete="off" />
             </label>
 
-            <label class="area-select"><span>エリア</span><select id="citySelect"><option value="all">周辺全域（44施設）</option><option value="zushi">逗子市（19）</option><option value="hayama">葉山町（9）</option><option value="kamakura">鎌倉地域（10）</option><option value="yokosuka">追浜・田浦（6）</option></select></label>
+            <label class="area-select"><span>エリア</span><select id="citySelect"><option value="all">対象全域（250施設）</option><option value="zushi">逗子市（19・全件）</option><option value="hayama">葉山町（9・全件）</option><option value="kamakura">鎌倉地域（10・一部）</option><option value="yokosuka">追浜・田浦（6・一部）</option><option value="fujisawa">藤沢市（118・認可系全件）</option><option value="chigasaki">茅ヶ崎市（88・認可系全件）</option></select></label>
 
             <div class="control-row">
               <div class="segmented" aria-label="施設区分">
@@ -93,7 +95,7 @@
             <label><input id="landslideToggle" type="checkbox" checked /> <span class="swatch landslide-fill"></span>土砂</label>
           </div>
           <div id="originHint" class="origin-hint" hidden><i data-lucide="crosshair"></i>地図上の引っ越し候補地点をクリック</div>
-          <button id="resetViewButton" class="map-button" type="button" title="逗子全域を表示" aria-label="逗子全域を表示"><i data-lucide="maximize"></i></button>
+          <button id="resetViewButton" class="map-button" type="button" title="表示中の施設全体を見る" aria-label="表示中の施設全体を見る"><i data-lucide="maximize"></i></button>
           <div class="map-note"><i data-lucide="mouse-pointer-click"></i>園を選ぶと詳細を表示</div>
         </section>
       </main>
@@ -109,22 +111,31 @@
           <button class="icon-button" value="close" aria-label="閉じる"><i data-lucide="x"></i></button>
         </div>
         <div class="dialog-body">
-          <p>色付きのハザード面と園のピンを重ねて、園舎が区域内か、区域に隣接しているかを目で確認できます。対象は逗子市に加え、葉山町、鎌倉地域、横須賀市の追浜・田浦です。</p>
+          <p>色付きのハザード面と園のピンを重ねて、園舎が区域内か、区域に隣接しているかを目で確認できます。逗子を起点に、藤沢・茅ヶ崎まで250施設を収録しています。</p>
           <div class="notice"><i data-lucide="triangle-alert"></i><p>一覧の判定は、国土地理院の住所検索が示した「地点とその周辺」の結果です。園舎そのものが区域内と断定するものではありません。</p></div>
+          <h3>施設一覧の収録範囲</h3>
+          <dl class="coverage-list">
+            <div><dt>逗子市 19・葉山町 9</dt><dd>自治体の公式掲載施設を全件収録</dd></div>
+            <div><dt>藤沢市 118・茅ヶ崎市 88</dt><dd>認可保育所、認定こども園、地域型保育を全件収録</dd></div>
+            <div><dt>鎌倉地域 10</dt><dd>鎌倉市全域ではなく、鎌倉地域のみ</dd></div>
+            <div><dt>追浜・田浦 6</dt><dd>横須賀市全域ではなく、対象地区の認可保育所のみ</dd></div>
+          </dl>
           <h3>引っ越し検討で確認したいこと</h3>
           <ol>
             <li>園舎のピンがハザード区域の色の内側にあるか</li>
             <li>自宅候補地から園までの経路が区域を通るか</li>
             <li>園の避難先と、全園児での避難訓練時間</li>
           </ol>
-          <p class="source-copy">施設情報：逗子市・葉山町・鎌倉市・横須賀市の公式施設一覧<br />ハザード情報：<a href="https://disaportal.gsi.go.jp/" target="_blank" rel="noreferrer">国土地理院「重ねるハザードマップ」</a>公開タイル</p>
+          <p class="source-copy">施設情報：各自治体の公式施設一覧（<a href="https://www.city.fujisawa.kanagawa.jp/hoiku/kenko/kosodate/hoikuen/ninka-ichiran.html" target="_blank" rel="noreferrer">藤沢市</a>・<a href="https://www.city.chigasaki.kanagawa.jp/kosodate/1024751/hoikuen/1058018.html" target="_blank" rel="noreferrer">茅ヶ崎市</a>ほか）<br />ハザード情報：<a href="https://disaportal.gsi.go.jp/" target="_blank" rel="noreferrer">国土地理院「重ねるハザードマップ」</a>公開タイル</p>
         </div>
         <div class="dialog-actions"><button class="primary-button" value="close">地図を見る</button></div>
       </form>
     </dialog>
 
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
     <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
-    <script src="app.js?v=2"></script>
+    <script src="regional-facilities.js?v=3"></script>
+    <script src="app.js?v=3"></script>
   </body>
 </html>
